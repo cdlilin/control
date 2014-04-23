@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/rabbit
+                http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
+
+    
+  <rabbit:connection-factory id="connectionFactory" host="10.1.186.86" port="5672" virtual-host="crec" username="crec" password="crec2014" />
+    <rabbit:admin connection-factory="connectionFactory" />
+    <!-- 定义队列 -->
+    <rabbit:queue id="event-Queue" />
+     <rabbit:queue id="test-Queue" />
+    <!-- create myExchange and bind myAnonymousQueue with my.routingkey.1 to the TUTORIAL-EXCHANGE-->
+    <rabbit:topic-exchange id="myExchange" name="CREC-EVENT-EXCHANGE">
+        <rabbit:bindings>
+        	<!-- 绑定自己的routing到对应的消息队列 -->
+            <rabbit:binding queue="event-Queue" pattern="crec.event.*"></rabbit:binding>
+            <rabbit:binding queue="test-Queue" pattern="my.#.*"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+    
+    <!-- 定义当前消息监听类 -->
+    <bean id="eventListener" class="com.crec.control.engine.MessageHandler" />
+    <bean id="testListener" class="com.crec.control.service.MessageHandler" />
+    
+    <!--绑定监听类到指定的队列上-->
+    <rabbit:listener-container id="eventListenerContainer" connection-factory="connectionFactory">
+        <rabbit:listener ref="eventListener" queues="event-Queue" />
+    </rabbit:listener-container>  
+    
+     <rabbit:listener-container id="testListenerContainer" connection-factory="connectionFactory">
+        <rabbit:listener ref="testListener" queues="test-Queue" />
+    </rabbit:listener-container>  
+    
+    <rabbit:template id="replyTemplate" connection-factory="connectionFactory"  exchange="CREC-EVENT-EXCHANGE"/>
+</beans>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<events>
+	<event name="trainlineEvent" parameter="userparam" startAction="trainlinesAction" result="${userparam}" routingKey="crec.web.reply.trainlineReply" amqpTemp="replyTemplate">
+	    <action  type="rest"  name="trainlinesAction" url="/rail/plan/Trainlines" method="get" parameter="${userparam}" resultKey="resultTrainlines" description="生成运行线">
+	     	<validate next="trainlineNoticeAction">
+	          <operation type="eq" value="200" paramName="code"/>
+	       </validate> 
+	    </action> 
+	    <action  type="rabbitmq"  name="trainlineNoticeAction"  parameter='{"bc":"${userparam.bc}","day": "${userparam.day}"}' resultKey="trainlineNotice" description="更新运行线" routingKey="crec.update.trainlineNotice" amqpTemp="replyTemplate">
+	     	<validate next="END">
+	          <operation type="eq" value="0" paramName="code"/>
+	       </validate> 
+	    </action> 
+	 </event>
+	 <event name="trainlineNoticeEvent" parameter="userparam" startAction="trainlineNotice" result="">
+	    <action  type="rabbitmq"  name="trainlineNoticeAction"  parameter="${userparam}" resultKey="trainlineNotice" description="生成运行线" routingKey="crec.event.trainlineNotice" amqpTemp="replyTemplate">
+	     	<validate next="END">
+	          <operation type="eq" value="0" paramName="trainlineNotice.code"/>
+	       </validate> 
+	    </action> 
+	 </event>
+ </events>
+ 
+ 
