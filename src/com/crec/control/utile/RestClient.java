@@ -40,7 +40,7 @@ public class RestClient {
 		Client client = Client.create();
 
 		WebResource webResource = client
-				.resource("http://10.1.191.135:7003/rail/plan/Trainlines");
+				.resource("http://10.1.132.149:7001/rail/plan/Trainlines");
 
 		String values = null;
 		try {

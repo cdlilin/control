@@ -127,7 +127,7 @@ public class Process implements Callable<Object>{
 //			this.getAmqpTemp().convertAndSend(this.getRoutingKey(), "{\"reuqestId\": \"" + this.uuid + "\"}".getBytes());// send
 			String result =  new StringBuffer("{\"reuqestId\": \"")
 								.append(this.uuid)
-								.append("\", \"result\":{\"userparam\":\"")
+								.append("\", \"result\":{\"code\": \"0\",\"userparam\":\"")
 								.append(ParameterHelper.getReplacement(this.getResultParam(), this.getResource()).replaceAll("\"", "\\\\\\\""))
 								.append("\"}}").toString();
 			this.getAmqpTemp().convertAndSend(this.getRoutingKey(), result.getBytes()); 

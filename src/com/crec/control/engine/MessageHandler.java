@@ -23,7 +23,7 @@ import com.crec.control.utile.EventConfigHelper;
 public class MessageHandler implements MessageListener {
 	 
 	
-	private static ExecutorService mhPool = Executors.newFixedThreadPool(150);   
+	private static ExecutorService mhPool = Executors.newFixedThreadPool(10);   
 	private static Logger log = Logger.getLogger(MessageHandler.class);
 	private static Map<String, Event> eventMap = new HashMap<String, Event>(); 
 	public static final String HEAD_PROPERTY = "head";
